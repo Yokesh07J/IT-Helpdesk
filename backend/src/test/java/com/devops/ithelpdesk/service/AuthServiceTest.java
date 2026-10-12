@@ -94,4 +94,60 @@ class AuthServiceTest {
         assertEquals("jane.smith@company.com", response.getEmail());
         assertEquals(Role.ROLE_EMPLOYEE, response.getRole());
     }
+
+    @Test
+    void login_ThrowsBadCredentialsExceptionWhenPasswordIsInvalid() {
+        AuthRequest request = new AuthRequest("jane.smith@company.com", "wrongpassword");
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenThrow(new org.springframework.security.authentication.BadCredentialsException("Bad credentials"));
+
+        assertThrows(org.springframework.security.authentication.BadCredentialsException.class,
+                () -> authService.login(request));
+        verify(tokenProvider, never()).generateToken(any());
+    }
+
+    @Test
+    void login_ThrowsUnauthorizedExceptionWhenUserNotFoundInRepository() {
+        AuthRequest request = new AuthRequest("unknown@company.com", "pass123");
+        Authentication auth = mock(Authentication.class);
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(auth);
+        when(userRepository.findByEmail("unknown@company.com")).thenReturn(Optional.empty());
+
+        assertThrows(com.devops.ithelpdesk.exception.UnauthorizedException.class,
+                () -> authService.login(request));
+    }
+
+    @Test
+    void getCurrentAuthenticatedUser_ReturnsUserWhenAuthenticated() {
+        Authentication auth = mock(Authentication.class);
+        when(auth.isAuthenticated()).thenReturn(true);
+        when(auth.getName()).thenReturn("jane.smith@company.com");
+        when(auth.getPrincipal()).thenReturn("jane.smith@company.com");
+        org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(auth);
+
+        when(userRepository.findByEmail("jane.smith@company.com")).thenReturn(Optional.of(sampleUser));
+
+        User current = authService.getCurrentAuthenticatedUser();
+        assertNotNull(current);
+        assertEquals("Jane Smith", current.getFullName());
+    }
+
+    @Test
+    void getCurrentAuthenticatedUser_ThrowsUnauthorizedExceptionWhenNotAuthenticated() {
+        org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(null);
+
+        assertThrows(com.devops.ithelpdesk.exception.UnauthorizedException.class,
+                () -> authService.getCurrentAuthenticatedUser());
+    }
+
+    @Test
+    void getCurrentAuthenticatedUser_ThrowsUnauthorizedExceptionWhenAnonymous() {
+        Authentication auth = mock(Authentication.class);
+        when(auth.isAuthenticated()).thenReturn(true);
+        when(auth.getPrincipal()).thenReturn("anonymousUser");
+        org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(auth);
+
+        assertThrows(com.devops.ithelpdesk.exception.UnauthorizedException.class,
+                () -> authService.getCurrentAuthenticatedUser());
+    }
 }
