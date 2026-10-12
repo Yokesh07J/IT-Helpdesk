@@ -48,10 +48,11 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
-  const isAdmin = user?.role === 'ROLE_ADMIN';
-  const isSupport = user?.role === 'ROLE_SUPPORT';
+  const role = (user?.role || '').toUpperCase();
+  const isAdmin = role === 'ROLE_ADMIN' || role === 'ADMIN';
+  const isSupport = role === 'ROLE_SUPPORT' || role === 'SUPPORT';
   const isStaff = isAdmin || isSupport;
-  const isEmployee = user?.role === 'ROLE_EMPLOYEE';
+  const isEmployee = role === 'ROLE_EMPLOYEE' || role === 'EMPLOYEE';
 
   return (
     <AuthContext.Provider

@@ -6,7 +6,7 @@ import com.devops.ithelpdesk.entity.Comment;
 import com.devops.ithelpdesk.entity.Role;
 import com.devops.ithelpdesk.entity.Ticket;
 import com.devops.ithelpdesk.entity.User;
-import com.devops.ithelpdesk.exception.UnauthorizedException;
+import org.springframework.security.access.AccessDeniedException;
 import com.devops.ithelpdesk.repository.CommentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +31,7 @@ public class CommentService {
 
         boolean isEmployee = currentUser.getRole() == Role.ROLE_EMPLOYEE;
         if (isEmployee && !ticket.getCreatedBy().getId().equals(currentUser.getId())) {
-            throw new UnauthorizedException("You cannot comment on this ticket");
+            throw new AccessDeniedException("You cannot comment on this ticket");
         }
 
         // Only staff can mark internal notes
@@ -52,7 +52,7 @@ public class CommentService {
 
         boolean isEmployee = currentUser.getRole() == Role.ROLE_EMPLOYEE;
         if (isEmployee && !ticket.getCreatedBy().getId().equals(currentUser.getId())) {
-            throw new UnauthorizedException("You cannot view comments on this ticket");
+            throw new AccessDeniedException("You cannot view comments on this ticket");
         }
 
         List<Comment> comments = commentRepository.findByTicketOrderByCreatedAtAsc(ticket);

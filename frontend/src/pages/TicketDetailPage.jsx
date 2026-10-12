@@ -339,11 +339,41 @@ const TicketDetailPage = () => {
               <button
                 type="submit"
                 className="btn btn-primary btn-sm"
-                disabled={!selectedStaffId || selectedStaffId === String(ticket.assignedTo?.id)}
+                disabled={!selectedStaffId || (ticket.assignedTo && selectedStaffId === String(ticket.assignedTo.id))}
               >
                 Assign Ticket
               </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Employee Ticket Lifecycle & Help Notice */}
+      {!isStaff && (
+        <div className="card" style={{ marginBottom: '1.5rem', background: 'rgba(255, 255, 255, 0.02)', borderColor: 'rgba(255, 255, 255, 0.07)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+            <div>
+              <h3 style={{ fontSize: '0.95rem', fontWeight: 600, color: '#fff', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <CheckCircle size={17} color="var(--primary)" />
+                <span>Ticket Lifecycle & Status</span>
+              </h3>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+                {ticket.status === 'OPEN' && 'Your ticket has been logged and is awaiting assignment to an IT support specialist.'}
+                {ticket.status === 'IN_PROGRESS' && `Assigned to ${ticket.assignedTo ? ticket.assignedTo.fullName : 'IT Support'} and currently under investigation.`}
+                {ticket.status === 'RESOLVED' && 'IT Support has resolved this issue. If everything is functioning properly, please click Confirm & Close.'}
+                {ticket.status === 'CLOSED' && 'This support request has been completed and closed.'}
+              </p>
+              <p style={{ fontSize: '0.78rem', color: 'var(--text-dim)', marginTop: '0.35rem' }}>
+                Note: Ticket assignment and status updates are managed by IT Support and Admin roles. Use the discussion thread below to add comments.
+              </p>
+            </div>
+
+            {ticket.status === 'RESOLVED' && (
+              <button onClick={handleCloseOwnTicket} className="btn btn-primary btn-sm">
+                <CheckCircle size={15} />
+                <span>Confirm & Close Ticket</span>
+              </button>
+            )}
           </div>
         </div>
       )}

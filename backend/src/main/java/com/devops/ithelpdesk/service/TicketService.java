@@ -6,7 +6,7 @@ import com.devops.ithelpdesk.dto.TicketRequest;
 import com.devops.ithelpdesk.dto.TicketResponse;
 import com.devops.ithelpdesk.entity.*;
 import com.devops.ithelpdesk.exception.ResourceNotFoundException;
-import com.devops.ithelpdesk.exception.UnauthorizedException;
+import org.springframework.security.access.AccessDeniedException;
 import com.devops.ithelpdesk.repository.TicketRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,7 +75,7 @@ public class TicketService {
             if (request.getStatus() == TicketStatus.CLOSED && ticket.getCreatedBy().getId().equals(currentUser.getId())) {
                 ticket.setStatus(TicketStatus.CLOSED);
             } else {
-                throw new UnauthorizedException("Employees cannot modify ticket status directly");
+                throw new AccessDeniedException("Employees cannot modify ticket status directly. Only closing a resolved ticket is permitted.");
             }
         } else {
             // Admin and Support can transition statuses
@@ -100,7 +100,7 @@ public class TicketService {
     @Transactional
     public TicketResponse assignTicket(Long id, AssignTicketRequest request, User currentUser) {
         if (currentUser.getRole() == Role.ROLE_EMPLOYEE) {
-            throw new UnauthorizedException("Only Support staff and Administrators can assign tickets");
+            throw new AccessDeniedException("Only Support staff and Administrators can assign tickets");
         }
 
         Ticket ticket = findEntityById(id);
@@ -123,7 +123,7 @@ public class TicketService {
     private void verifyAccess(Ticket ticket, User currentUser) {
         if (currentUser.getRole() == Role.ROLE_EMPLOYEE &&
                 !ticket.getCreatedBy().getId().equals(currentUser.getId())) {
-            throw new UnauthorizedException("You are not authorized to view this ticket");
+            throw new AccessDeniedException("You are not authorized to view this ticket");
         }
     }
 

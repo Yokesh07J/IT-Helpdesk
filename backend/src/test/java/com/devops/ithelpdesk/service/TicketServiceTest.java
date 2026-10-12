@@ -5,14 +5,14 @@ import com.devops.ithelpdesk.dto.StatusUpdateRequest;
 import com.devops.ithelpdesk.dto.TicketRequest;
 import com.devops.ithelpdesk.dto.TicketResponse;
 import com.devops.ithelpdesk.entity.*;
-import com.devops.ithelpdesk.exception.UnauthorizedException;
-import com.devops.ithelpdesk.repository.TicketRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.access.AccessDeniedException;
+import com.devops.ithelpdesk.repository.TicketRepository;
 
 import java.util.Optional;
 
@@ -33,6 +33,7 @@ class TicketServiceTest {
     private TicketService ticketService;
 
     private User employee;
+    private User otherEmployee;
     private User supportUser;
     private Ticket sampleTicket;
 
@@ -40,6 +41,9 @@ class TicketServiceTest {
     void setUp() {
         employee = new User("John Doe", "john.doe@company.com", "hash", "Engineering", Role.ROLE_EMPLOYEE);
         employee.setId(10L);
+
+        otherEmployee = new User("Jane Roe", "jane.roe@company.com", "hash", "Sales", Role.ROLE_EMPLOYEE);
+        otherEmployee.setId(15L);
 
         supportUser = new User("Alex Vance", "alex@helpdesk.com", "hash", "Support", Role.ROLE_SUPPORT);
         supportUser.setId(20L);
@@ -85,6 +89,26 @@ class TicketServiceTest {
     }
 
     @Test
+    void updateTicketStatus_AllowsEmployeeToCloseOwnResolvedTicket() {
+        sampleTicket.setStatus(TicketStatus.RESOLVED);
+        when(ticketRepository.findById(100L)).thenReturn(Optional.of(sampleTicket));
+        when(ticketRepository.save(any(Ticket.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        StatusUpdateRequest request = new StatusUpdateRequest(TicketStatus.CLOSED, "Confirmed fixed");
+        TicketResponse response = ticketService.updateTicketStatus(100L, request, employee);
+
+        assertEquals(TicketStatus.CLOSED, response.getStatus());
+    }
+
+    @Test
+    void updateTicketStatus_ThrowsAccessDeniedWhenEmployeeChangesToInProgress() {
+        when(ticketRepository.findById(100L)).thenReturn(Optional.of(sampleTicket));
+
+        StatusUpdateRequest request = new StatusUpdateRequest(TicketStatus.IN_PROGRESS, null);
+        assertThrows(AccessDeniedException.class, () -> ticketService.updateTicketStatus(100L, request, employee));
+    }
+
+    @Test
     void assignTicket_UpdatesAssignedStaffAndTransitionsOpenToInProgress() {
         when(ticketRepository.findById(100L)).thenReturn(Optional.of(sampleTicket));
         when(userService.findEntityById(20L)).thenReturn(supportUser);
@@ -98,8 +122,14 @@ class TicketServiceTest {
     }
 
     @Test
-    void assignTicket_ThrowsUnauthorizedWhenAttemptedByEmployee() {
+    void assignTicket_ThrowsAccessDeniedWhenAttemptedByEmployee() {
         AssignTicketRequest request = new AssignTicketRequest(20L);
-        assertThrows(UnauthorizedException.class, () -> ticketService.assignTicket(100L, request, employee));
+        assertThrows(AccessDeniedException.class, () -> ticketService.assignTicket(100L, request, employee));
+    }
+
+    @Test
+    void getTicketById_ThrowsAccessDeniedWhenEmployeeViewsOtherEmployeeTicket() {
+        when(ticketRepository.findById(100L)).thenReturn(Optional.of(sampleTicket));
+        assertThrows(AccessDeniedException.class, () -> ticketService.getTicketById(100L, otherEmployee));
     }
 }
