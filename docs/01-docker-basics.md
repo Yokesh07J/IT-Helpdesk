@@ -321,7 +321,22 @@ Gracefully halts a running container by sending `SIGTERM`, followed by `SIGKILL`
 
 ---
 
-### Command 9: `docker rm`
+### Command 9: `docker start`
+Restarts an existing stopped container without re-creating it.
+
+- **Syntax**: `docker start <container-name|id>`
+- **Lab Command**:
+  ```powershell
+  docker start helpdesk-web-test
+  ```
+- **Expected Output**:
+  ```text
+  helpdesk-web-test
+  ```
+
+---
+
+### Command 10: `docker rm`
 Removes one or more stopped containers from host disk storage.
 
 - **Syntax**: `docker rm <container-name|id>`
@@ -334,9 +349,59 @@ Removes one or more stopped containers from host disk storage.
   helpdesk-web-test
   ```
 
-- **Prune command to clean all stopped containers and dangling images**:
+- **Prune command to clean all stopped containers**:
   ```powershell
   docker container prune -f
+  ```
+
+---
+
+### Command 11: `docker rmi`
+Removes an image from local host storage cache.
+
+- **Syntax**: `docker rmi <image-name|id>`
+- **Lab Command**:
+  ```powershell
+  docker rmi hello-world
+  ```
+- **Expected Output**:
+  ```text
+  Untagged: hello-world:latest
+  Deleted: sha256:d2c94e258dcb3c5ac4040d302d86ca42f3984a0484434237485963f341af37b4
+  ```
+
+---
+
+### Command 12: `docker volume ls`
+Lists all persistent storage volumes managed by Docker on the host.
+
+- **Syntax**: `docker volume ls`
+- **Lab Command**:
+  ```powershell
+  docker volume ls
+  ```
+- **Expected Output**:
+  ```text
+  DRIVER    VOLUME NAME
+  local     mysql_data
+  ```
+
+---
+
+### Command 13: `docker network ls`
+Lists internal virtual networks configured in Docker Engine.
+
+- **Syntax**: `docker network ls`
+- **Lab Command**:
+  ```powershell
+  docker network ls
+  ```
+- **Expected Output**:
+  ```text
+  NETWORK ID     NAME      DRIVER    SCOPE
+  de6821d3eebc   bridge    bridge    local
+  17dae7a4f380   host      host      local
+  b7f9d7fb9d66   none      null      local
   ```
 
 ---
