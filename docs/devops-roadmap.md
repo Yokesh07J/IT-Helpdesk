@@ -13,7 +13,7 @@ This roadmap tracks the implementation, status, and verification of the 6 phases
 | **Phase 3** | **Continuous Testing** | JUnit 5 + Mockito test suite (43 tests), JaCoCo coverage, declarative Jenkinsfile, GitHub SCM pipeline, test report publishing | **COMPLETED** |
 | **Phase 4** | **Configuration Management** | Ansible inventory, playbooks for environment configuration (WSL/Ubuntu Linux), idempotency verification | **COMPLETED** |
 | **Phase 5** | **Integrated DevOps Workflow** | Complete Git ➔ Jenkins ➔ Test ➔ Containerization ➔ Ansible deployment pipeline documentation and verification | **COMPLETED** |
-| **Phase 6** | **CAT Submission & Viva Preparation**| Project abstract, architecture diagrams, testing results checklist, viva voce question bank across all DevOps tools | **PENDING** |
+| **Phase 6** | **CAT Submission & Viva Preparation**| Complete academic report (DOCX & PDF), architecture diagrams, testing results checklist, viva voce question bank | **COMPLETED** |
 
 ---
 
@@ -24,3 +24,4 @@ This roadmap tracks the implementation, status, and verification of the 6 phases
 - [Phase 3: Continuous Testing Using JUnit 5, Mockito, Maven, and Jenkins](file:///c:/DevopsCat/IT-Helpdesk/docs/03-continuous-testing-jenkins.md)
 - [Phase 4: Configuration Management Using Ansible in WSL/Ubuntu Linux](file:///c:/DevopsCat/IT-Helpdesk/docs/04-ansible-configuration-management.md) (Script: [ansible/verify-ansible.sh](file:///c:/DevopsCat/IT-Helpdesk/ansible/verify-ansible.sh))
 - [Phase 5: Integrated DevOps Workflow](file:///c:/DevopsCat/IT-Helpdesk/docs/05-integrated-devops-workflow.md) (Script: [scripts/verify-integrated-devops-workflow.ps1](file:///c:/DevopsCat/IT-Helpdesk/scripts/verify-integrated-devops-workflow.ps1))
+- [Phase 6: Final Project Report Deliverables](file:///c:/DevopsCat/IT-Helpdesk/docs/final-report/) (DOCX: [23IT723_Final_Project_Report_IT_Helpdesk.docx](file:///c:/DevopsCat/IT-Helpdesk/docs/final-report/23IT723_Final_Project_Report_IT_Helpdesk.docx), PDF: [23IT723_Final_Project_Report_IT_Helpdesk.pdf](file:///c:/DevopsCat/IT-Helpdesk/docs/final-report/23IT723_Final_Project_Report_IT_Helpdesk.pdf))
