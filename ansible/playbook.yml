@@ -1,0 +1,129 @@
+---
+# ==============================================================================
+# Ansible Playbook: IT Helpdesk Infrastructure Configuration Management
+# Course: DevOps Lab CAT Project
+# Targets: helpdesk_servers
+# Idempotent: Yes (Repeated executions make 0 unexpected modifications)
+# ==============================================================================
+- name: Configure IT Helpdesk System Environment and Runtime Infrastructure
+  hosts: helpdesk_servers
+  become: true
+  gather_facts: true
+
+  tasks:
+    # --------------------------------------------------------------------------
+    # Task 1: Connectivity Verification & Host Fingerprinting
+    # --------------------------------------------------------------------------
+    - name: 1.1 Verify target host connectivity via Ansible ping
+      ansible.builtin.ping:
+
+    - name: 1.2 Gather and display target system facts
+      ansible.builtin.debug:
+        msg:
+          - "Managed Node: {{ inventory_hostname }} ({{ ansible_hostname }})"
+          - "Operating System: {{ ansible_distribution }} {{ ansible_distribution_version }} ({{ ansible_os_family }})"
+          - "Linux Kernel: {{ ansible_kernel }} ({{ ansible_architecture }})"
+          - "Total Memory: {{ ansible_memtotal_mb | default('N/A') }} MB"
+          - "Python Interpreter: {{ ansible_python_version }} at {{ ansible_python.executable }}"
+
+    # --------------------------------------------------------------------------
+    # Task 2: System Prerequisites Verification
+    # --------------------------------------------------------------------------
+    - name: 2.1 Ensure required diagnostic and system packages are installed
+      ansible.builtin.package:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ required_packages }}"
+
+    # --------------------------------------------------------------------------
+    # Task 3: Idempotent Directory Hierarchy Creation
+    # --------------------------------------------------------------------------
+    - name: 3.1 Ensure operational directory hierarchy exists with secure permissions
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ app_owner }}"
+        group: "{{ app_group }}"
+        mode: "{{ dir_mode }}"
+      loop:
+        - "{{ app_base_dir }}"
+        - "{{ app_config_dir }}"
+        - "{{ app_logs_dir }}"
+        - "{{ app_backup_dir }}"
+        - "{{ app_scripts_dir }}"
+
+    # --------------------------------------------------------------------------
+    # Task 4: Template-Driven Configuration Deployment
+    # --------------------------------------------------------------------------
+    - name: 4.1 Deploy secure application environment configuration from Jinja2 template
+      ansible.builtin.template:
+        src: templates/helpdesk-env.j2
+        dest: "{{ app_config_dir }}/helpdesk.env"
+        owner: "{{ app_owner }}"
+        group: "{{ app_group }}"
+        mode: "{{ secure_file_mode }}"
+
+    - name: 4.2 Deploy Docker Compose override configuration from Jinja2 template
+      ansible.builtin.template:
+        src: templates/docker-compose.override.yml.j2
+        dest: "{{ app_config_dir }}/docker-compose.override.yml"
+        owner: "{{ app_owner }}"
+        group: "{{ app_group }}"
+        mode: "{{ file_mode }}"
+
+    - name: 4.3 Deploy automated health check probe script from Jinja2 template
+      ansible.builtin.template:
+        src: templates/system-health-check.sh.j2
+        dest: "{{ app_scripts_dir }}/healthcheck.sh"
+        owner: "{{ app_owner }}"
+        group: "{{ app_group }}"
+        mode: "{{ exec_file_mode }}"
+
+    # --------------------------------------------------------------------------
+    # Task 5: Configuration Validation and Integrity Testing
+    # --------------------------------------------------------------------------
+    - name: 5.1 Verify deployed configuration files exist and are not empty
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      register: config_files_stat
+      loop:
+        - "{{ app_config_dir }}/helpdesk.env"
+        - "{{ app_config_dir }}/docker-compose.override.yml"
+        - "{{ app_scripts_dir }}/healthcheck.sh"
+
+    - name: 5.2 Assert configuration files are valid and non-empty
+      ansible.builtin.assert:
+        that:
+          - item.stat.exists
+          - item.stat.size > 0
+        fail_msg: "Configuration file {{ item.item }} is missing or empty!"
+        success_msg: "Configuration file {{ item.item }} verified (size: {{ item.stat.size }} bytes)."
+      loop: "{{ config_files_stat.results }}"
+
+    - name: 5.3 Validate bash syntax of the deployed health check probe
+      ansible.builtin.command:
+        cmd: "bash -n {{ app_scripts_dir }}/healthcheck.sh"
+      changed_when: false
+
+    - name: 5.4 Execute automated service health check probe
+      ansible.builtin.command:
+        cmd: "{{ app_scripts_dir }}/healthcheck.sh"
+      register: healthcheck_result
+      changed_when: false
+
+    - name: 5.5 Display service health check probe output
+      ansible.builtin.debug:
+        var: healthcheck_result.stdout_lines
+
+    # --------------------------------------------------------------------------
+    # Task 6: Execution Summary
+    # --------------------------------------------------------------------------
+    - name: 6.1 Confirm successful configuration management execution
+      ansible.builtin.debug:
+        msg:
+          - "================================================================="
+          - " Ansible Configuration Management Complete for {{ inventory_hostname }}"
+          - " Environment: {{ environment_name }}"
+          - " Base Directory: {{ app_base_dir }}"
+          - " Status: IDEMPOTENT & VERIFIED"
+          - "================================================================="

@@ -1,0 +1,35 @@
+# ==============================================================================
+# Docker Compose Override for IT Helpdesk Infrastructure
+# Managed by Ansible (Phase 4: Configuration Management)
+# Target: {{ inventory_hostname }} | Environment: {{ environment_name }}
+# ==============================================================================
+
+version: '3.8'
+
+services:
+  backend:
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    environment:
+      - SPRING_PROFILES_ACTIVE={{ spring_profiles_active }}
+      - DB_NAME={{ database_name }}
+
+  frontend:
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  mysql:
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "3"

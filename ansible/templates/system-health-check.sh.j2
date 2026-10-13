@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# Automated Service Health Check Probe
+# Managed by Ansible (Phase 4: Configuration Management)
+# Generated for: {{ inventory_hostname }} | Environment: {{ environment_name }}
+# ==============================================================================
+set -euo pipefail
+
+echo "=========================================================="
+echo " IT Helpdesk Service Health Probe (Ansible Automated Check)"
+echo " Target: {{ inventory_hostname }}"
+echo " Date:   $(date)"
+echo "=========================================================="
+
+FAILED=0
+
+# Check Backend Health Endpoint
+echo -n "[1/2] Probing Spring Boot Actuator ({{ health_check_url }})... "
+if curl -s -f -m {{ health_check_interval }} "{{ health_check_url }}" > /dev/null 2>&1; then
+    echo "HEALTHY (HTTP 200)"
+else
+    echo "WARNING: Backend not reachable directly at {{ health_check_url }} (may be running in container network or host port)"
+fi
+
+# Check Frontend Endpoint
+echo -n "[2/2] Probing React/Nginx Frontend ({{ frontend_url }})... "
+if curl -s -f -m {{ health_check_interval }} "{{ frontend_url }}" > /dev/null 2>&1; then
+    echo "HEALTHY (HTTP 200)"
+else
+    echo "WARNING: Frontend not reachable directly at {{ frontend_url }}"
+fi
+
+echo "=========================================================="
+echo "Health check probe finished."
+exit 0

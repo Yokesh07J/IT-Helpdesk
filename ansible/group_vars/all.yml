@@ -1,0 +1,44 @@
+---
+# Group Variables for IT Helpdesk Infrastructure
+# Course: DevOps Lab CAT Project
+
+# Project and Target Host Paths
+app_name: "it-helpdesk"
+app_base_dir: "/opt/it-helpdesk"
+app_config_dir: "{{ app_base_dir }}/config"
+app_logs_dir: "{{ app_base_dir }}/logs"
+app_backup_dir: "{{ app_base_dir }}/backups"
+app_scripts_dir: "{{ app_base_dir }}/scripts"
+
+# File Ownership and Security Modes
+app_owner: "root"
+app_group: "root"
+dir_mode: "0755"
+file_mode: "0644"
+secure_file_mode: "0600"
+exec_file_mode: "0755"
+
+# Network Ports and Services
+frontend_port: 80
+backend_port: 8088
+mysql_port: 3306
+
+# Application Environment Settings
+spring_profiles_active: "prod"
+database_name: "it_helpdesk"
+database_host: "helpdesk-mysql"
+database_port: 3306
+database_user: "helpdesk_user"
+
+# Required System Utility Packages
+required_packages:
+  - curl
+  - git
+  - tar
+  - python3
+
+# Health Check Settings
+health_check_interval: 10
+health_check_retries: 3
+health_check_url: "http://localhost:{{ backend_port }}/actuator/health"
+frontend_url: "http://localhost:{{ frontend_port }}/"

@@ -1,0 +1,28 @@
+# ==============================================================================
+# IT Helpdesk Application Environment Configuration
+# Managed by Ansible (Phase 4: Configuration Management)
+# Target Host: {{ inventory_hostname }} | Environment: {{ environment_name }}
+# DO NOT EDIT DIRECTLY ON MANAGED HOSTS - CHANGES WILL BE OVERWRITTEN
+# ==============================================================================
+
+# Application Profile
+SPRING_PROFILES_ACTIVE={{ spring_profiles_active }}
+
+# Database Configuration
+DB_HOST={{ database_host }}
+DB_PORT={{ database_port }}
+DB_NAME={{ database_name }}
+DB_USER={{ database_user }}
+
+# Ports
+BACKEND_PORT={{ backend_port }}
+FRONTEND_PORT={{ frontend_port }}
+
+# Service URLs
+BACKEND_HEALTH_ENDPOINT={{ health_check_url }}
+FRONTEND_URL={{ frontend_url }}
+
+# Managed Environment Metadata
+DEPLOYMENT_ENV={{ environment_name }}
+DEPLOYMENT_TARGET={{ inventory_hostname }}
+MANAGED_BY=Ansible-{{ ansible_version.full | default('core') }}
