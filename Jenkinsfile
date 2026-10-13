@@ -47,7 +47,7 @@ pipeline {
                         bat 'node -v'
                         bat 'npm -v'
                         bat 'docker --version'
-                        bat 'docker compose version'
+                        bat 'docker-compose version'
                     }
                 }
             }
@@ -113,9 +113,9 @@ pipeline {
                 echo '====================================================='
                 script {
                     if (isUnix()) {
-                        sh 'docker compose config'
+                        sh 'docker compose config || docker-compose config'
                     } else {
-                        bat 'docker compose config'
+                        bat 'docker-compose config'
                     }
                 }
             }
@@ -128,9 +128,9 @@ pipeline {
                 echo '====================================================='
                 script {
                     if (isUnix()) {
-                        sh 'docker compose build'
+                        sh 'docker compose build || docker-compose build'
                     } else {
-                        bat 'docker compose build'
+                        bat 'docker-compose build'
                     }
                 }
             }
