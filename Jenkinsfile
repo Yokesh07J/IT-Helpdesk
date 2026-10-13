@@ -7,6 +7,9 @@ pipeline {
         FRONTEND_PORT = '80'
         BACKEND_PORT = '8088'
         MYSQL_PORT = '3306'
+        JAVA_HOME = 'C:\\Program Files\\Java\\jdk-21.0.11'
+        M2_HOME = 'C:\\Users\\Laptop\\apache-maven\\apache-maven-3.9.6'
+        PATH = "C:\\Program Files\\Java\\jdk-21.0.11\\bin;C:\\Users\\Laptop\\apache-maven\\apache-maven-3.9.6\\bin;C:\\Program Files\\nodejs;C:\\Users\\Laptop\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin;${env.PATH}"
     }
 
     options {
