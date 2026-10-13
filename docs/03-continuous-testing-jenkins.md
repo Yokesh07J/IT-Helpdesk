@@ -348,25 +348,34 @@ pipeline {
 
 ---
 
-## 8. Step-by-Step Jenkins Job Setup Guide
+## 8. Step-by-Step Jenkins Job Setup & Live Verification
 
-To link this repository to Jenkins:
-1. **Open Jenkins Web UI**: Navigate to `http://localhost:8080/` in your browser.
-2. **Log In**: Sign in using your Jenkins credentials.
-3. **Create New Item**: Click **New Item** on the left dashboard.
-4. **Select Pipeline**:
-   - Item Name: `IT-Helpdesk-CI-Pipeline`
-   - Type: **Pipeline**
-   - Click **OK**.
-5. **Configure Pipeline Definition**:
-   - Scroll to the **Pipeline** section.
-   - Definition: Select **Pipeline script from SCM**.
-   - SCM: Select **Git**.
-   - Repository URL: `file:///C:/DevopsCat/IT-Helpdesk` (or your GitHub repository URL).
-   - Branch Specifier: `*/main`.
-   - Script Path: `Jenkinsfile`.
-6. **Save & Build**: Click **Save**, then click **Build Now**.
-7. **Inspect Output**: Click the build number (e.g. `#1`), select **Console Output**, and inspect stage-by-stage logs and **Test Result** trends.
+### 8.1 Configuration Details
+The pipeline job `IT-Helpdesk-Pipeline` in Jenkins 2.568.2 LTS connects directly to the GitHub remote:
+1. **Jenkins Web UI**: `http://localhost:8080/`
+2. **Pipeline Job Name**: `IT-Helpdesk-Pipeline`
+3. **SCM Definition**: **Pipeline script from SCM**
+4. **SCM Type**: **Git**
+5. **Repository URL**: `https://github.com/Yokesh07J/IT-Helpdesk.git`
+6. **Branch Specifier**: `*/main`
+7. **Script Path**: `Jenkinsfile`
+8. **Lightweight Checkout**: Enabled
+
+### 8.2 Live Build Execution Evidence (Build #6)
+- **Status**: `SUCCESS`
+- **Revision Checked Out**: `e9b80c4` (`origin/main`)
+- **Execution Stages**:
+  - `Stage 1: Checkout SCM` — Cloned GitHub repository `https://github.com/Yokesh07J/IT-Helpdesk.git`.
+  - `Stage 2: Validate Environment` — Verified Java 21, Maven 3.9.6, Node.js 22, Docker 29.8, Docker Compose.
+  - `Stage 3: Build Backend` — Clean compiled Spring Boot backend (`mvn clean compile`).
+  - `Stage 4: Run Tests` — Executed all 43 JUnit 5 & Mockito tests; generated JaCoCo coverage (`Tests run: 43, Failures: 0, Errors: 0, Skipped: 0`).
+  - `Stage 5: Build Frontend` — Executed `npm ci` and `npm run build` (Vite SPA production bundle built in 4.16s).
+  - `Stage 6: Validate Docker Compose` — Validated multi-service orchestration graph (`docker-compose config`).
+  - `Stage 7: Build Multi-Stage Docker Images` — Assembled `it-helpdesk-backend:1.0.0` and `it-helpdesk-frontend:1.0.0`.
+  - `Post-Build Actions`:
+    - Recorded JUnit test results: **43 / 43 tests passed (0 failures, 0 errors, 0 skipped)**.
+    - Archiving artifacts: Archived Spring Boot JAR and full JaCoCo code coverage site.
+- **Pipeline Result**: `BUILD SUCCESSFUL: All tests passed, bundle compiled, and Docker images built.`
 
 ---
 

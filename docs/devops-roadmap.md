@@ -9,8 +9,8 @@ This roadmap tracks the implementation, status, and verification of the 6 phases
 | Phase | Description | Deliverables | Status |
 |---|---|---|---|
 | **Phase 1** | **Docker Basics** | Installation guide, verification script, core command exercises (`pull`, `images`, `run`, `ps`, `stop`, `rm`, `logs`, `exec`, `inspect`), lab record, viva Q&A | **COMPLETED** |
-| **Phase 2** | **Java/Web App Deployment** | Multi-stage backend `Dockerfile` (Java 21), multi-stage frontend `Dockerfile` (Vite + Nginx), `docker-compose.yml`, MySQL persistent storage, networking, health checks | **READY TO IMPLEMENT** |
-| **Phase 3** | **Continuous Testing** | JUnit 5 + Mockito test suite, Jenkinsfile, Maven automated test execution, test report publishing | **PENDING** |
+| **Phase 2** | **Java/Web App Deployment** | Multi-stage backend `Dockerfile` (Java 21), multi-stage frontend `Dockerfile` (Vite + Nginx), `docker-compose.yml`, MySQL persistent storage, networking, health checks | **COMPLETED** |
+| **Phase 3** | **Continuous Testing** | JUnit 5 + Mockito test suite (43 tests), JaCoCo coverage, declarative Jenkinsfile, GitHub SCM pipeline, test report publishing | **COMPLETED** |
 | **Phase 4** | **Configuration Management** | Ansible inventory, playbooks for environment configuration (WSL/Ubuntu Linux), idempotency verification | **PENDING** |
 | **Phase 5** | **Integrated DevOps Workflow** | Complete Git ➔ Jenkins ➔ Test ➔ Containerization ➔ Ansible deployment pipeline documentation and verification | **PENDING** |
 | **Phase 6** | **CAT Submission & Viva Preparation**| Project abstract, architecture diagrams, testing results checklist, viva voce question bank across all DevOps tools | **PENDING** |
@@ -18,5 +18,7 @@ This roadmap tracks the implementation, status, and verification of the 6 phases
 ---
 
 ## Detailed Phase Documentation Links
-- [Phase 1: Docker Basics & Lifecycle Management](file:///c:/DevopsCat/IT-Helpdesk/docs/01-docker-basics.md)
-- Automated verification script: [scripts/verify-docker-basics.ps1](file:///c:/DevopsCat/IT-Helpdesk/scripts/verify-docker-basics.ps1)
+- [Phase 0: Project Audit & Environment Baseline](file:///c:/DevopsCat/IT-Helpdesk/docs/00-project-audit.md)
+- [Phase 1: Docker Basics & Lifecycle Management](file:///c:/DevopsCat/IT-Helpdesk/docs/01-docker-basics.md) (Script: [scripts/verify-docker-basics.ps1](file:///c:/DevopsCat/IT-Helpdesk/scripts/verify-docker-basics.ps1))
+- [Phase 2: Multi-Container Docker Deployment](file:///c:/DevopsCat/IT-Helpdesk/docs/02-docker-deployment.md) (Script: [scripts/test-docker-deployment.ps1](file:///c:/DevopsCat/IT-Helpdesk/scripts/test-docker-deployment.ps1))
+- [Phase 3: Continuous Testing Using JUnit 5, Mockito, Maven, and Jenkins](file:///c:/DevopsCat/IT-Helpdesk/docs/03-continuous-testing-jenkins.md)
