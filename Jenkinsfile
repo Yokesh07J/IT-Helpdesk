@@ -18,6 +18,13 @@ pipeline {
         disableConcurrentBuilds()
     }
 
+    triggers {
+        // Automatically checks GitHub for new commits every 2 minutes (works on localhost without tunnels)
+        pollSCM('H/2 * * * *')
+        // Automatically triggers instantly when a GitHub Webhook event is received (e.g., via ngrok)
+        githubPush()
+    }
+
     stages {
         stage('Checkout') {
             steps {
